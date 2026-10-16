@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Feedback | AI Mock Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page-shell interview-shell">
+        <header class="topbar"><a class="brand-mark" href="{{ url_for('index') }}">AI<span>/</span>MI</a><div class="session-meta">Question {{ question_index + 1 }} of {{ total }}</div></header>
+        <section class="card feedback-card">
+            <div class="feedback-header">
+                <div><p class="eyebrow">Your feedback</p><h1>{{ feedback.status }}</h1></div>
+                <div class="score-bubble"><strong>{{ feedback.score }}</strong><span>/ 10</span></div>
+            </div>
+            <div class="feedback-grid">
+                <article><h2>What went well</h2><p>{{ feedback.what_went_well }}</p></article>
+                <article><h2>What is missing</h2><p>{{ feedback.what_is_missing }}</p></article>
+                <article class="wide-feedback"><h2>Better answer</h2><p>{{ feedback.better_answer }}</p></article>
+                <article class="tip-box wide-feedback"><h2>Improvement tip</h2><p>{{ feedback.improvement_tip }}</p></article>
+            </div>
+            <form action="{{ url_for('next_question') }}" method="post"><button class="button primary-button full-button" type="submit">{{ 'See final result' if is_last else 'Next question' }} <span aria-hidden="true">&#8594;</span></button></form>
+        </section>
+    </main>
+</body>
+</html>

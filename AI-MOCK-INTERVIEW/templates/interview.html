@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Question {{ question_index + 1 }} | AI Mock Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page-shell interview-shell">
+        <header class="topbar">
+            <a class="brand-mark" href="{{ url_for('index') }}">AI<span>/</span>MI</a>
+            <div class="session-meta"><span>{{ technology }}</span><span class="dot">&#8226;</span><span>{{ level }}</span></div>
+        </header>
+        <section class="progress-area">
+            <div class="progress-label"><span>Question {{ question_index + 1 }} of {{ total }}</span><span>{{ ((question_index + 1) / total * 100)|round|int }}%</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width: {{ ((question_index + 1) / total * 100)|round|int }}%"></div></div>
+        </section>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>
+            {% endif %}
+        {% endwith %}
+        <section class="card question-card">
+            <div class="question-kicker">{{ 'Multiple choice' if question.type == 'mcq' else 'Direct question' }}</div>
+            <h1>{{ question.question }}</h1>
+            <form action="{{ url_for('submit_answer') }}" method="post" novalidate>
+                {% if question.type == 'mcq' %}
+                    <div class="answer-options">
+                        {% for option in question.options %}
+                            <label class="answer-option"><input type="radio" name="selected_option" value="{{ option }}"><span class="option-letter">{{ 'ABCD'[loop.index0] }}</span><span>{{ option }}</span></label>
+                        {% endfor %}
+                    </div>
+                    <p class="answer-or">or type your answer</p>
+                    <input class="typed-answer" name="typed_answer" type="text" placeholder="Type an answer, or write I don't know" autocomplete="off">
+                    <input id="selected-answer" name="answer" type="hidden" value="">
+                {% else %}
+                    <textarea name="answer" rows="7" placeholder="Write your answer in your own words..."></textarea>
+                {% endif %}
+                <div class="action-row">
+                    <button class="button secondary-button" formaction="{{ url_for('dont_know') }}" formmethod="post" type="submit">I Don't Know</button>
+                    <button class="button primary-button" type="submit">Submit answer <span aria-hidden="true">&#8594;</span></button>
+                </div>
+            </form>
+        </section>
+        <p class="quiet-note centered-note">Take a breath. A thoughtful answer is more useful than a rushed one.</p>
+    </main>
+    <script>
+        const answerForm = document.querySelector('form[action="{{ url_for('submit_answer') }}"]');
+        if (answerForm) {
+            answerForm.addEventListener('submit', (event) => {
+                if (event.submitter && event.submitter.getAttribute('formaction') === "{{ url_for('dont_know') }}") return;
+                const typedAnswer = answerForm.querySelector('[name="typed_answer"]');
+                const selectedOption = answerForm.querySelector('[name="selected_option"]:checked');
+                const hiddenAnswer = answerForm.querySelector('#selected-answer');
+                if (typedAnswer && hiddenAnswer) {
+                    hiddenAnswer.value = typedAnswer.value.trim() || (selectedOption ? selectedOption.value : '');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

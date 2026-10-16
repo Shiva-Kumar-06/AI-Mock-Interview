@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Select Level | AI Mock Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page-shell narrow-shell">
+        <a class="back-link" href="{{ url_for('index') }}">&#8592; Change technology</a>
+        <section class="hero-block compact-hero">
+            <p class="eyebrow">{{ technology }} interview</p>
+            <h1>Select Your Knowledge Level</h1>
+            <p class="hero-copy">We will tailor the pace and depth to where you are today.</p>
+        </section>
+        <section class="card selection-card">
+            <form action="{{ url_for('select_level') }}" method="post">
+                <div class="option-grid level-grid">
+                    {% for level in levels %}
+                        <label class="choice-card level-choice">
+                            <input type="radio" name="level" value="{{ level }}" required>
+                            <span>{{ level }}</span>
+                            <small>{% if level == 'Basic' %}Build your foundations{% elif level == 'Intermediate' %}Test your working knowledge{% else %}Think like a specialist{% endif %}</small>
+                        </label>
+                    {% endfor %}
+                </div>
+                <button class="button primary-button" type="submit">Generate interview <span aria-hidden="true">&#8594;</span></button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

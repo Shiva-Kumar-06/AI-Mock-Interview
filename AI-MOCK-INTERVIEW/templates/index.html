@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Mock Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page-shell narrow-shell">
+        <section class="hero-block">
+            <p class="eyebrow">Practice with purpose</p>
+            <h1>AI Mock Interview</h1>
+            <p class="hero-copy">Build confidence with a focused, realistic interview for the technology you are learning.</p>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="card selection-card">
+            <div class="card-heading">
+                <span class="step-label">Step 1 of 2</span>
+                <h2>Choose your technology</h2>
+                <p>Select one area to shape your interview questions.</p>
+            </div>
+            <form action="{{ url_for('select_technology') }}" method="post">
+                <div class="option-grid technology-grid">
+                    {% for technology in technologies %}
+                        <label class="choice-card">
+                            <input type="radio" name="technology" value="{{ technology }}" required>
+                            <span>{{ technology }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <button class="button primary-button" type="submit">Continue <span aria-hidden="true">&#8594;</span></button>
+            </form>
+        </section>
+        <p class="quiet-note">10 questions · instant feedback · no database required</p>
+    </main>
+</body>
+</html>

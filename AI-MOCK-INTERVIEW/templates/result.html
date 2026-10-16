@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Final Result | AI Mock Interview</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="page-shell result-shell">
+        <section class="result-intro"><p class="eyebrow">Interview complete</p><h1>Your practice report</h1><p>{{ technology }} · {{ level }}</p></section>
+        <section class="score-overview card">
+            <div class="overall-score"><span>Overall score</span><strong>{{ report.overall_score }}</strong><small>/ 100</small></div>
+            <div class="score-breakdown"><div><span>MCQ score</span><strong>{{ report.mcq_score }}<small>/ 50</small></strong></div><div><span>Direct questions</span><strong>{{ report.direct_score }}<small>/ 50</small></strong></div></div>
+        </section>
+        <section class="export-actions" aria-label="Download result">
+            <button class="button secondary-button" id="download-pdf" type="button">Download Result as PDF</button>
+            <button class="button secondary-button" id="download-image" type="button">Download Result as Image</button>
+        </section>
+        <section class="report-grid">
+            <article class="card report-section"><h2>Strong areas</h2><ul>{% for item in report.strong_areas %}<li>{{ item }}</li>{% endfor %}</ul></article>
+            <article class="card report-section"><h2>Weak areas</h2><ul>{% for item in report.weak_areas %}<li>{{ item }}</li>{% endfor %}</ul></article>
+            <article class="card report-section"><h2>Topics to improve</h2><ul>{% for item in report.topics_to_improve %}<li>{{ item }}</li>{% endfor %}</ul></article>
+            <article class="card report-section"><h2>Suggestions</h2><ul>{% for item in report.suggestions %}<li>{{ item }}</li>{% endfor %}</ul></article>
+        </section>
+        <section class="card question-review">
+            <h2>Question review</h2>
+            {% for question in questions %}
+                <article class="review-item">
+                    <div class="review-heading"><h3>Question {{ loop.index }}</h3><span>{{ results[loop.index0].score }}/10 · {{ results[loop.index0].status }}</span></div>
+                    <p><strong>Question:</strong> {{ question.question }}</p>
+                    <p><strong>User answer:</strong> {{ answers[loop.index0] }}</p>
+                    <p><strong>Correct answer:</strong> {{ question.correct_answer }}</p>
+                    <p><strong>Explanation:</strong> {{ results[loop.index0].better_answer }}</p>
+                </article>
+            {% endfor %}
+        </section>
+        <section class="export-report" id="export-report" aria-hidden="true">
+            <header class="export-report-header">
+                <p class="export-eyebrow">AI MOCK INTERVIEW</p>
+                <h2>Interview Result Report</h2>
+                <p>{{ technology }} · {{ level }}</p>
+            </header>
+            <section class="export-summary">
+                <div><span>Selected subject</span><strong>{{ technology }}</strong></div>
+                <div><span>Difficulty level</span><strong>{{ level }}</strong></div>
+                <div><span>Total questions</span><strong>{{ questions|length }}</strong></div>
+                <div><span>Score</span><strong>{{ report.overall_score }} / 100</strong></div>
+                <div><span>Correct answers</span><strong>{{ results|selectattr('status', 'equalto', 'Correct')|list|length }}</strong></div>
+                <div><span>Wrong answers</span><strong>{{ results|selectattr('status', 'equalto', 'Incorrect')|list|length }}</strong></div>
+            </section>
+            <h3>Question Review</h3>
+            {% for question in questions %}
+                <article class="export-question">
+                    <h4>Question {{ loop.index }} <span>{{ results[loop.index0].status }} · {{ results[loop.index0].score }}/10</span></h4>
+                    <p><strong>Question:</strong> {{ question.question }}</p>
+                    <p><strong>User's answer:</strong> {{ answers[loop.index0] }}</p>
+                    <p><strong>Correct answer:</strong> {{ question.correct_answer }}</p>
+                    <p><strong>Explanation:</strong> {{ results[loop.index0].better_answer }}</p>
+                    <p><strong>Suggestion:</strong> {{ results[loop.index0].improvement_tip }}</p>
+                </article>
+            {% endfor %}
+            <section class="export-suggestions">
+                <h3>Suggestions</h3>
+                <ul>{% for item in report.suggestions %}<li>{{ item }}</li>{% endfor %}</ul>
+            </section>
+        </section>
+        <section class="encouragement"><p class="eyebrow">Keep going</p><h2>{{ report.encouraging_message }}</h2><a class="button primary-button" href="{{ url_for('index') }}">Start another interview <span aria-hidden="true">&#8594;</span></a></section>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const exportReport = document.getElementById('export-report');
+        const fileName = 'ai-mock-interview-result';
+
+        document.getElementById('download-image').addEventListener('click', async () => {
+            const canvas = await html2canvas(exportReport, {scale: 2, backgroundColor: '#ffffff'});
+            const link = document.createElement('a');
+            link.download = `${fileName}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        document.getElementById('download-pdf').addEventListener('click', async () => {
+            const canvas = await html2canvas(exportReport, {scale: 2, backgroundColor: '#ffffff'});
+            const image = canvas.toDataURL('image/png');
+            const {jsPDF} = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imageHeight = canvas.height * pageWidth / canvas.width;
+            let offset = 0;
+
+            while (offset < imageHeight) {
+                if (offset > 0) pdf.addPage();
+                pdf.addImage(image, 'PNG', 0, -offset, pageWidth, imageHeight);
+                offset += pageHeight;
+            }
+            pdf.save(`${fileName}.pdf`);
+        });
+    </script>
+</body>
+</html>

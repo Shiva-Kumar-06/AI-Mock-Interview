@@ -1,0 +1,27 @@
+🚀 Excited to share my new project — **AI Mock Interview** 🎯
+
+I built an AI-powered mock interview website that helps students practice technical interviews.
+
+✨ **Features:**
+• Select technology: Python, Java, C, n8n, AI Automation
+• Choose difficulty: Basic, Intermediate, Advanced
+• AI-generated interview questions
+• MCQ + direct-answer questions
+• AI-based answer evaluation
+• Correct answer and explanation
+• “I Don't Know” option with simple explanation
+• Final score and performance report
+• Suggestions for improvement
+
+🛠️ **Technologies Used:**
+• Python
+• Flask
+• HTML
+• CSS
+• Google Gemini API
+
+This project helped me understand how **Python, Flask, APIs, and Generative AI** can be combined to build a real-world application.
+
+I'm continuously learning and improving my development skills. 🚀
+
+#Python #Flask #GenerativeAI #Gemini #AI #WebDevelopment #Project #BTech #StudentDeveloper #Learning
